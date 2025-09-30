@@ -1,5 +1,8 @@
 import express from "express";
+import Slot from "../models/slot.js";
+
 const router = express.Router();
+
 
 // exemplo de rota
 router.get("/", async (req, res) => {
