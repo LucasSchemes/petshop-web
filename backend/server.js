@@ -17,16 +17,19 @@ app.use("/api/slots", slotRoutes);
 app.use("/api/clientes", clientesRoutes);
 app.use("/api/agendamentos", agendamentosRoutes);
 
+// 🔥 Alias para compatibilidade com o frontend (espera /api/horarios)
+app.use("/api/horarios", slotRoutes);
+
 // rota raiz simples
 app.get("/api", (req, res) => {
-    res.send("API Petshop rodando! 🚀");
+    res.json({ message: "API Petshop rodando! 🚀" });
 });
 
 // servir arquivos estáticos do frontend
 app.use(express.static(path.join(__dirname, "../frontend/public")));
 
 // rota padrão manda para index.html (frontend SPA ou páginas)
-app.get("/*", (req, res) => {
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, "../frontend/public/index.html"));
 });
 
