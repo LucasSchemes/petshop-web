@@ -1,13 +1,16 @@
+// backend/config/database.js
 import mongoose from "mongoose";
 
-const connectDB = async () => {
+export const connectDB = async () => {
     try {
-        await mongoose.connect("mongodb://127.0.0.1:27017/petshop");
-        console.log("MongoDB conectado!");
+        await mongoose.connect("mongodb://localhost:27017/petshop", {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log("MongoDB conectado com sucesso!");
     } catch (error) {
-        console.error("Erro ao conectar no MongoDB:", error.message);
-        process.exit(1);
+        console.error("Erro ao conectar ao MongoDB:", error.message);
+        process.exit(1); // encerra se não conectar
     }
 };
-
 export default connectDB;
