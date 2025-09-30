@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 export const connectDB = async () => {
     try {
-        await mongoose.connect("mongodb://localhost:27017/petshop", {
+        await mongoose.connect("mongodb://localhost:27017/petshop-web", {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
