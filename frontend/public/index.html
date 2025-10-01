@@ -4,34 +4,13 @@
   <meta charset="utf-8" />
   <title>Agendamento de Banho e Tosa</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <link rel="stylesheet" href="styles.css"> 
+
   <style>
-    body { font-family: Arial, Helvetica, sans-serif; margin: 24px; background: #f7f9fc; }
-    h1 { font-size: 28px; margin-bottom: 8px; }
-    #calendar { display: flex; gap: 10px; margin-bottom: 20px; }
-    .day-card {
-      flex: 1;
-      padding: 12px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      cursor: pointer;
-      text-align: center;
-      transition: background 0.2s;
+    #agendamento-form.hidden {
+      display: none;
     }
-    .day-card:hover { background: #f0f4ff; }
-    .day-card.active { background: #cce0ff; border-color: #6699ff; font-weight: bold; }
-    #slots-container { display: flex; flex-wrap: wrap; gap: 10px; }
-    .slot {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 8px 12px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .slot:hover { background: #f2f2f2; }
-    #agendamento-form { margin-top: 20px; background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd; }
-    #mensagem { margin-top: 12px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -46,10 +25,13 @@
   <form id="agendamento-form" class="hidden">
     <h2>Confirmar Agendamento</h2>
     <div><strong>Slot escolhido:</strong> <span id="slot-info"></span></div>
+    
     <label for="nome">Seu nome:</label>
     <input type="text" id="nome" required />
+    <br> 
     <label for="telefone">Seu telefone:</label>
     <input type="tel" id="telefone" required />
+    
     <input type="hidden" id="slot-id" />
     <button type="submit">Agendar</button>
   </form>
