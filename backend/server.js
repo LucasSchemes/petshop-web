@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { connectDB } from "./config/database.js";
 import slotRoutes from "./routes/slotsroute.js";
 import agendamentosRoutes from "./routes/agendamentosroute.js";
+import clientesRoutes from "./routes/clientesroute.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +19,7 @@ connectDB();
 // rotas API
 app.use("/api/slots", slotRoutes);
 app.use("/api/agendamentos", agendamentosRoutes);
+app.use("/api/clientes", clientesRoutes);
 
 // servir frontend estático
 app.use(express.static(path.join(__dirname, "../frontend/public")));

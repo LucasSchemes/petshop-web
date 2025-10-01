@@ -1,5 +1,6 @@
 let slots = [];
 let selectedDay = null;
+let clienteIdentificado = null;
 
 async function carregarSlots() {
   try {
@@ -16,6 +17,7 @@ async function carregarSlots() {
 function montarCalendario() {
   const container = document.getElementById("calendar");
   container.innerHTML = "";
+
 
   const diasUnicos = [...new Set(slots.map(s => new Date(s.data).toDateString()))]
     .map(str => new Date(str))
@@ -65,21 +67,123 @@ function selecionarSlot(slot) {
   window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
 }
 
+
+document.getElementById("identificacao-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const telefone = document.getElementById("ident-telefone").value.trim();
+    const msgDiv = document.getElementById("identificacao-mensagem");
+    const cadastroForm = document.getElementById("cadastro-form"); // Novo atalho
+
+    msgDiv.textContent = "";
+    cadastroForm.classList.add("hidden"); 
+
+    if (!telefone) return;
+
+    try {
+        const res = await fetch("/api/clientes/identificar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ telefone })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+
+            msgDiv.style.color = "red";
+            msgDiv.textContent = "Cliente não encontrado. Por favor, cadastre-se.";
+
+            cadastroForm.classList.remove("hidden");
+          
+            document.getElementById("cad-telefone").value = telefone;
+            document.getElementById("cad-nome").value = ""; 
+            clienteIdentificado = null;
+
+            document.getElementById("agendamento-principal").classList.add("hidden");
+            return;
+        }
+
+        clienteIdentificado = data;
+
+        document.getElementById("identificacao").classList.add("hidden");
+
+        document.getElementById("cliente-nome-info").textContent = data.nome; 
+
+        document.getElementById("agendamento-principal").classList.remove("hidden");
+        msgDiv.textContent = `Olá, ${data.nome}! Você já pode agendar.`;
+        msgDiv.style.color = "green";
+
+        await carregarSlots();
+
+    } catch (err) {
+        msgDiv.style.color = "red";
+        msgDiv.textContent = "Erro de rede. Verifique sua conexão.";
+        console.error(err);
+    }
+});
+
+document.getElementById("cadastro-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    const nome = document.getElementById("cad-nome").value.trim();
+    const telefone = document.getElementById("cad-telefone").value.trim();
+    const msgDiv = document.getElementById("cadastro-mensagem");
+
+    if (!nome || !telefone) return;
+
+    try {
+        const res = await fetch("/api/clientes", { 
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nome, telefone })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            msgDiv.style.color = "red";
+            msgDiv.textContent = data.erro || "Erro ao cadastrar cliente.";
+            return;
+        }
+
+        clienteIdentificado = data;
+
+        document.getElementById("identificacao").classList.add("hidden");
+  
+        document.getElementById("identificacao-mensagem").textContent = `Bem-vindo(a), ${data.nome}! Você já pode agendar.`;
+        document.getElementById("identificacao-mensagem").style.color = "green";
+        document.getElementById("agendamento-principal").classList.remove("hidden");
+
+        document.getElementById("cliente-nome-info").textContent = data.nome; 
+        
+        await carregarSlots();
+
+    } catch (err) {
+        msgDiv.style.color = "red";
+        msgDiv.textContent = "Erro de rede no cadastro. Tente novamente.";
+        console.error(err);
+    }
+});
+
 document.getElementById("agendamento-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const nome = document.getElementById("nome").value.trim();
-  const telefone = document.getElementById("telefone").value.trim(); 
+  
+  if (!clienteIdentificado) {
+      alert("Você precisa se identificar antes de agendar.");
+      return;
+  }
+  
+  const clienteId = clienteIdentificado._id; 
   const slotId = document.getElementById("slot-id").value;
   const mensagemDiv = document.getElementById("mensagem");
-  
 
-  if (!nome || !telefone || !slotId) return; 
+  if (!clienteId || !slotId) return;
 
   try {
     const res = await fetch("/api/agendamentos", {
       method: "POST",
       headers: { "Content-Type":"application/json" },
-      body: JSON.stringify({ nome, telefone, slotId }) 
+      body: JSON.stringify({ clienteId, slotId })
     });
     const data = await res.json();
     if (!res.ok) {
@@ -87,13 +191,15 @@ document.getElementById("agendamento-form").addEventListener("submit", async (e)
       mensagemDiv.textContent = data.error || "Erro ao agendar";
       return;
     }
+    
     mensagemDiv.style.color = "green";
     mensagemDiv.textContent = `Agendamento confirmado para ${data.slot.horario} em ${new Date(data.slot.data).toLocaleDateString()}.`;
     document.getElementById("agendamento-form").classList.add("hidden");
-    document.getElementById("nome").value = "";
-    document.getElementById("telefone").value = ""; // Limpar campo telefone
+    
+
     await carregarSlots();
     selecionarDia(new Date(data.slot.data));
+    
   } catch (err) {
     mensagemDiv.style.color = "red";
     mensagemDiv.textContent = "Erro ao processar agendamento.";
@@ -101,4 +207,3 @@ document.getElementById("agendamento-form").addEventListener("submit", async (e)
   }
 });
 
-carregarSlots();

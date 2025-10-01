@@ -11,8 +11,8 @@ router.post("/", async (req, res) => {
   try {
 
     // validar dados
-    const { nome, telefone, slotId } = req.body;
-    if (!nome || !slotId) return res.status(400).json({ error: "nome e slotId são obrigatórios" });
+    const { clienteId, slotId } = req.body;
+    if (!clienteId || !slotId) return res.status(400).json({ error: "clienteId e slotId são obrigatórios" });
 
     // buscar slot
     const slot = await Slot.findById(slotId);
@@ -20,12 +20,9 @@ router.post("/", async (req, res) => {
     if (slot.capacidade <= 0) return res.status(400).json({ error: "Slot sem vagas" }); //
 
     // criar ou buscar cliente
-    let cliente = await Cliente.findOne({ nome: nome }); //
-    if (!cliente) {
-      cliente = new Cliente({ nome, telefone }); //
-      await cliente.save();
+    let cliente = await Cliente.findById(clienteId); //
+    if (!cliente) return res.status(404).json({ error: "Cliente não encontrado" });
     
-    }
 
     // criar agendamento
     const agendamento = new Agendamento({ cliente: cliente._id, slot: slot._id }); //

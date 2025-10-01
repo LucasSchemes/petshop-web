@@ -88,3 +88,7 @@ h1 {
     margin-top: 12px; 
     font-weight: bold; 
 }
+
+.hidden { 
+    display: none; 
+}
