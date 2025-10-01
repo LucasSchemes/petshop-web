@@ -18,6 +18,7 @@
             container.innerHTML = "Carregando...";
 
             try {
+                // Bussca a lista de agendamentos da API
                 const res = await fetch("/api/agendamentos");
                 if (!res.ok) throw new Error("Erro ao buscar agendamentos");
 
@@ -29,9 +30,8 @@
                     return;
                 }
 
-                // Agrupar agendamentos por dia
+                // Transforma a lista de agendamentos em um objeto agrupado por dia (cada chave é uma data)
                 const agendamentosPorDia = listaAgendamentos.reduce((acc, a) => {
-                    // pegar a data formatada
                     const dataKey = new Date(a.slot.data).toLocaleDateString('pt-BR', { dateStyle: 'long' });
                     if (!acc[dataKey]) {
                         acc[dataKey] = [];
@@ -42,7 +42,7 @@
 
                 let htmlContent = '';
 
-                // Montar a Tabela para cada dia
+                // Itera sobre cada dia e seus agendamentos para construir a tabela
                 for (const dia in agendamentosPorDia) {
                     const agendamentos = agendamentosPorDia[dia];
                     
@@ -82,7 +82,8 @@
                         </div>
                     `;
                 }
-
+                
+                // Insere o conteúdo HTML gerado no container
                 container.innerHTML = htmlContent;
 
             } catch (error) {

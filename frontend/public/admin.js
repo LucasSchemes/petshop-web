@@ -1,6 +1,9 @@
+// Função assíncrona para buscar e exibir todos os agendamentos na página de administração.
 async function fetchAgendamentos() {
     try {
+        // Faz uma requisição GET para a API que retorna a lista de todos os agendamentos.
         const response = await fetch("/api/agendamentos");
+        // Converte o corpo da resposta em formato JSON. O resultado será um array de objetos.
         const agendamentos = await response.json();
 
         const container = document.getElementById("agendamentos-container");
