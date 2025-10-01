@@ -3,7 +3,9 @@
 Projeto desenvolvido para a disciplina de Programação Web do curso de graduação da Universidade Federal de Santa Catarina (UFSC), Campus Araranguá
 
 Alunos: Lucas Saft Schemes e Pedro Antonio Tolardo Magnavita
+
 Professor: Fábio Rodrigues de La Rocha
+
 Semestre: 2025.2
 
 ## 📜 Descrição
