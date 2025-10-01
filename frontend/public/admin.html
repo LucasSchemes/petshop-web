@@ -1,16 +1,97 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Painel do Petshop</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <title>Admin - Agendamentos</title>
+    <link rel="stylesheet" href="admin.css"> 
 </head>
-
 <body>
-    <h1>Painel de Agendamentos</h1>
-    <div id="agendamentos-container"></div>
-    <script src="admin.js"></script>
-</body>
+    <div class="container"> <h1>Agenda do Pet Shop</h1>
+        <p>Visão geral dos agendamentos.</p>
 
+        <div id="schedule-container">Carregando...</div>
+    </div>
+
+    <script>
+        async function carregarAgendamentos() {
+            const container = document.getElementById("schedule-container");
+            container.innerHTML = "Carregando...";
+
+            try {
+                const res = await fetch("/api/agendamentos");
+                if (!res.ok) throw new Error("Erro ao buscar agendamentos");
+
+                // Lista de todos os agendamentos
+                const listaAgendamentos = await res.json(); 
+
+                if (listaAgendamentos.length === 0) {
+                    container.innerHTML = "<p>Nenhum agendamento encontrado.</p>";
+                    return;
+                }
+
+                // Agrupar agendamentos por dia
+                const agendamentosPorDia = listaAgendamentos.reduce((acc, a) => {
+                    // pegar a data formatada
+                    const dataKey = new Date(a.slot.data).toLocaleDateString('pt-BR', { dateStyle: 'long' });
+                    if (!acc[dataKey]) {
+                        acc[dataKey] = [];
+                    }
+                    acc[dataKey].push(a);
+                    return acc;
+                }, {});
+
+                let htmlContent = '';
+
+                // Montar a Tabela para cada dia
+                for (const dia in agendamentosPorDia) {
+                    const agendamentos = agendamentosPorDia[dia];
+                    
+                    // Título do dia
+                    htmlContent += `<h2>${dia}</h2>`; 
+                    
+                    // Estrutura da Tabela
+                    htmlContent += `
+                        <div class="schedule-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Horário</th>
+                                    <th>Cliente</th>
+                                    <th>Telefone</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    // Ordenar os agendamentos do dia por horário
+                    agendamentos.sort((a, b) => a.slot.horario.localeCompare(b.slot.horario));
+
+                    agendamentos.forEach(a => {
+                        htmlContent += `
+                            <tr>
+                                <td class="booked-slot">${a.slot.horario}</td>
+                                <td>${a.cliente.nome}</td>
+                                <td>${a.cliente.telefone || 'N/A'}</td>
+                            </tr>
+                        `;
+                    });
+
+                    htmlContent += `
+                            </tbody>
+                        </table>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = htmlContent;
+
+            } catch (error) {
+                console.error("Erro ao carregar agendamentos:", error);
+                container.innerHTML = "<p style='color: red;'>Erro ao carregar a agenda. Verifique o servidor.</p>";
+            }
+        }
+
+        carregarAgendamentos();
+    </script>
+</body>
 </html>

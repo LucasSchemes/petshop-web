@@ -4,8 +4,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js" 
   },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -13,5 +16,16 @@
   "dependencies": {
     "express": "^5.1.0",
     "mongoose": "^8.18.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasSchemes/petshop-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LucasSchemes/petshop-web/issues"
+  },
+  "homepage": "https://github.com/LucasSchemes/petshop-web#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

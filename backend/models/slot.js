@@ -1,18 +1,24 @@
 import mongoose from "mongoose";
 
 const slotSchema = new mongoose.Schema({
+
+    dia: {
+        type: String, 
+        required: true,
+    },
+
     data: {
         type: Date,
         required: true,
     },
     horario: {
-        type: String, // Ex: "14:00"
+        type: String, 
         required: true,
     },
     capacidade: {
         type: Number,
         required: true,
-        min: 0,
+        default: 1,
     },
 });
 

@@ -1,4 +1,3 @@
-// backend/config/database.js
 import mongoose from "mongoose";
 
 export const connectDB = async () => {
@@ -10,7 +9,8 @@ export const connectDB = async () => {
         console.log("MongoDB conectado com sucesso!");
     } catch (error) {
         console.error("Erro ao conectar ao MongoDB:", error.message);
-        process.exit(1); // encerra se não conectar
+        process.exit(1);
     }
 };
+
 export default connectDB;

@@ -11,11 +11,7 @@ const agendamentoSchema = new mongoose.Schema({
         ref: "Slot",
         required: true,
     },
-    status: {
-        type: String,
-        enum: ["confirmado", "cancelado"],
-        default: "confirmado",
-    },
+
     criadoEm: {
         type: Date,
         default: Date.now,

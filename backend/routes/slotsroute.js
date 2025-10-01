@@ -4,10 +4,12 @@ import Slot from "../models/slot.js";
 const router = express.Router();
 
 
-// exemplo de rota
 router.get("/", async (req, res) => {
     try {
-        const slots = await Slot.find();
+        const now = new Date();
+        const slots = await Slot.find({
+            capacidade: { $gt: 0 },
+            data: { $gte: now }}).sort({ data: 1, horario: 1});
         res.json(slots);
     } catch (err) {
         console.error(err);
@@ -15,24 +17,27 @@ router.get("/", async (req, res) => {
     }
 });
 
-//
-// 2. Listar apenas slots disponíveis (para cliente)
-//    GET /api/horarios
-//
+// buscar apenas slots com vagas > 0 e data futura
 router.get("/disponiveis", async (req, res) => {
     try {
-        const disponiveis = await Slot.find({ vagas: { $gt: 0 } });
+        
+        const now = new Date();
+        const disponiveis = await Slot.find({ 
+            capacidade: { $gt: 0 },
+            data: { $gt: now }
+        }).sort({ data: 1, horario: 1 }); 
+        
+        // retornar JSON
         res.json(disponiveis);
+    
+    // erro
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Erro ao buscar horários disponíveis" });
     }
 });
 
-//
-// 3. Decrementar vagas de um slot (quando agenda)
-//    PUT /api/slots/:id
-//
+// decrementar vagas de um slot
 router.put("/:id", async (req, res) => {
     try {
         const slot = await Slot.findById(req.params.id);
@@ -40,11 +45,12 @@ router.put("/:id", async (req, res) => {
         if (!slot) {
             return res.status(404).json({ error: "Slot não encontrado" });
         }
-        if (slot.vagas <= 0) {
+       
+        if (slot.capacidade <= 0) {
             return res.status(400).json({ error: "Sem vagas nesse horário" });
         }
 
-        slot.vagas -= 1;
+        slot.capacidade -= 1;
         await slot.save();
 
         res.json(slot);
@@ -55,3 +61,4 @@ router.put("/:id", async (req, res) => {
 });
 
 export default router;
+

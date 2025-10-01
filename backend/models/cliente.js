@@ -15,6 +15,11 @@ const clienteSchema = new mongoose.Schema({
             ref: "Agendamento",
         },
     ],
+
+    criadoEm: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 const Cliente = mongoose.model("Cliente", clienteSchema);

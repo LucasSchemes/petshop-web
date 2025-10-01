@@ -3,7 +3,7 @@ import Cliente from "../models/cliente.js";
 
 const router = express.Router();
 
-// 🔹 Criar cliente
+// criar cliente
 router.post("/", async (req, res) => {
     try {
         const { nome, telefone } = req.body;
@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-// 🔹 Listar clientes
+// listar clientes
 router.get("/", async (req, res) => {
     try {
         const clientes = await Cliente.find();

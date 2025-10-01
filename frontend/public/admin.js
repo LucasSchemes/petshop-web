@@ -10,7 +10,7 @@ async function fetchAgendamentos() {
             container.innerHTML = "<p>Nenhum agendamento encontrado.</p>";
             return;
         }
-
+        // ordenar agendamentos por data e hora
         agendamentos.forEach(a => {
             const div = document.createElement("div");
             div.classList.add("agendamento");
