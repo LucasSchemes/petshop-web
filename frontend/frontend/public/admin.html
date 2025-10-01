@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Admin - Agendamentos</title></head>
+<body>
+  <h1>Agendamentos</h1>
+  <ul id="lista-agendamentos">Carregando...</ul>
+  <script>
+    async function carregarAgendamentos() {
+      const ul = document.getElementById("lista-agendamentos");
+      ul.innerHTML = "Carregando...";
+      const res = await fetch("/api/agendamentos");
+      const lista = await res.json();
+      ul.innerHTML = "";
+      lista.forEach(a => {
+        const li = document.createElement("li");
+        const data = new Date(a.slot.data).toLocaleDateString();
+        li.textContent = `${a.cliente.nome} - ${data} ${a.slot.horario} (${a.slot.dia})`;
+        ul.appendChild(li);
+      });
+    }
+    carregarAgendamentos();
+  </script>
+</body>
+</html>
